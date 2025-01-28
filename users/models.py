@@ -6,25 +6,27 @@ from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser,Permis
 
 user_types = (
                 ("medical_practitioner","medical_practitioner"),
-                ("patient","patient"),
+                ("other","other"),
                 )
 
 class UserManager(BaseUserManager):
-    def create_user(self,email, 
+    def create_user(self,phone_number, 
                     first_name='null',last_name='null',
-                    user_type="individual",phone_number=None,password=None):
-        if not email:
-            raise ValueError('Users must have an email address')
-        user = self.model(email=self.normalize_email(email),
+                    user_type="individual",email=None,password=None):
+        if not phone_number:
+            raise ValueError('Users must have a phone number')
+        if email:
+            email =self.normalize_email(email)
+        user = self.model(phone_number,
                           first_name=first_name,last_name=last_name,
-                          user_type=user_type,phone_number=phone_number
+                          user_type=user_type,email=email
                            )
         user.set_password(password)
         user.save(using=self._db)
         return user
   
-    def create_superuser(self, email, password):
-        user = self.create_user(email,password=password,first_name="SITE",last_name="CREATOR",)
+    def create_superuser(self, phone_number, password):
+        user = self.create_user(phone_number,password=password,first_name="SITE",last_name="CREATOR",)
         user.is_admin = True
         user.staff=True
         user.save(using=self._db)
@@ -33,10 +35,12 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser,PermissionsMixin):
     first_name =models.CharField(verbose_name='first name', max_length=255)
     last_name =models.CharField(verbose_name='last name', max_length=255)
-    email = models.EmailField(verbose_name='email address',max_length=255,unique=True,)
-    user_type = models.CharField(max_length=20, choices = user_types)
-    phone_number = models.CharField(verbose_name='phone number', max_length=20,null=True,blank=True)
-    
+    phone_number = models.CharField(verbose_name='phone number', max_length=20,unique=True)
+    user_type = models.CharField(max_length=20, choices = user_types,default='medical_practitioner')
+    email = models.EmailField(verbose_name='email address',max_length=255,null=True,blank=True)
+    specialization = models.CharField(verbose_name='specialization', max_length=50,unique=True)
+    verified_number=models.BooleanField(default=False)
+    verified_email=models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_general_admin = models.BooleanField(default=False)
@@ -45,7 +49,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     
     objects = UserManager()
     
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'phone_number'
     
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -73,4 +77,25 @@ class User(AbstractBaseUser,PermissionsMixin):
     def is_staff(self):
         return self.staff
 
+
+class Patient(models.Model):
+    """Model definition for Patient."""
+
+    # TODO: Define fields here
+    full_name = models.CharField(verbose_name='full_name', max_length=150)
+    identifier = models.CharField(verbose_name='identifier', max_length=20)
+    whatspp_number = models.CharField(verbose_name='whatspp_number', max_length=20)
+    medical_practitioner = models.ForeignKey(User, verbose_name="medical_practitioner",
+                                             on_delete=models.CASCADE, related_name='patient_medical_practitioner')
+    
+
+    class Meta:
+        """Meta definition for Patient."""
+
+        verbose_name = 'Patient'
+        verbose_name_plural = 'Patients'
+
+    def __str__(self):
+        """Unicode representation of Patient."""
+        return f"{self.full_name} --- {self.identifier}"
 
