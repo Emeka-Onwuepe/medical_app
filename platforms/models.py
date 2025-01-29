@@ -24,6 +24,7 @@ class Whatsapp_Record(models.Model):
     patient = models.ForeignKey(Patient, verbose_name="patient",
                                              on_delete=models.CASCADE, related_name='whatsapp_patient')
     context = models.CharField(max_length=20, choices = context_options)
+    record_id = models.CharField(max_length=140, unique=True)
     record_type = models.CharField(max_length=8, choices = record_types)
     video = models.FileField(verbose_name="video",upload_to = 'videos/',validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
     audio = models.FileField(verbose_name="audio",upload_to = 'audios/',validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
