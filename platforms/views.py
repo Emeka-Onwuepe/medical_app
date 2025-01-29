@@ -22,10 +22,14 @@ def Whatsapp_Hooks(request, *args, **kwargs):
         
 
     if request.method == 'POST':
+        # print(request.headers['Content-Type'])
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
-                forwarded,text,id,timestamp = get_message(data)
+                print('hello')
+                message_type,forwarded,content,id,timestamp = get_message(data)
+                print(message_type)
                 if forwarded:
                     # customer messages
                     pass
@@ -40,7 +44,9 @@ def Whatsapp_Hooks(request, *args, **kwargs):
 
 
 def send_whatsapp_message(request,message):
-    response = send_whatsapp_message_func(message)
+    # print(request.__dict__)
+    
+    # response = send_whatsapp_message_func(message)
     # print('hello')
     # url = f"https://graph.facebook.com/v21.0/{phone_id}/messages"
     # headers = {

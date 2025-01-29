@@ -1,6 +1,6 @@
 import requests
 
-token = 'EAAXrgbJ16VkBO94M7rSJ2PyZBmr7Y0CWrwgxbOOuojqj21JX51AKnGr7FeEWYGSLffe1eLbWivP7DxIGBXX9r41XqrQFrjvVgDyt0znXx10QIlfY6MLcjINbM2BbPEUEmZBSZCzedktPHIk0iuGtkuKNL3gWqi8ctMeUmcDdJV0Ok21VPscvXbYUhyzmHoOZAxwqtytqVZBhzFUlbIdZCpWcgU07DZC'
+token = 'EAAXrgbJ16VkBO98cHwL1PU5BhHZAh95yHRbkb0ZBD69OEK7bWku3DS5iCllzbUK4yMax8zRrEd8AFy6BvnkZCi6DkdKFgOdDgnezAImS81TB5buEL2c74UTst532z1ZCBLFsm34ssjIv5LZCIcrj3j90GhaZArOzCLmCZA7R4ZC4HhkiHWeTF9xJfqlVvZCILtLiQqg100J2GG9vZAnJvSdekJkZCwUAJIZD'
 phone_id = '534666619730859' 
 
 
@@ -26,13 +26,17 @@ def send_whatsapp_message_func(message):
 def get_message(data):
     forwarded = False
     messages = data['entry'][0]['changes'][0]['value']['messages'][0]
-    text = messages['text']['body']
+    message_type = messages['type']
+    if message_type == 'text':
+        content = messages['text']['body']
+    else:
+        content = f"{messages[message_type]['id']}\{messages[message_type]['mime_type']}" 
     id = messages['id']
     timestamp = messages['timestamp']
     context = messages.get('context')
     if context:
         forwarded = context['forwarded']
-    return forwarded,text,id,timestamp
+    return message_type,forwarded,content,id,timestamp
 
 # {
 #   "field": "messages",
@@ -108,3 +112,20 @@ def get_message(data):
 # #     print(d)
 # #     print('-------------------------------')
 
+{'object': 'whatsapp_business_account', 'entry': [{'id': '519993747869426',
+                                                'changes': [{'value': {'messaging_product': 'whatsapp', 
+                                                                       'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
+                                                                       'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}],
+                                                                       'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEFDOEIyQTU4MTVGQjVEMTU5MTg4RjU5RkFGN0UyOTk0AA==',
+                                                                                    'timestamp': '1738105784', 'type': 'image', 
+                                                                                    'image': {'mime_type': 'image/jpeg', 'sha256': 'fofx8QXQ1FXG412pH959yCMbR2qYpXbuw0OMm1t0aWw=', 
+                                                                                    'id': '503401162364441'}}]}, 'field': 'messages'}]}]}
+
+
+{'object': 'whatsapp_business_account', 
+ 'entry': [{'id': '519993747869426', 
+            'changes': [{'value': {'messaging_product': 'whatsapp', 
+                                   'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
+                                   'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}], 
+                                   'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEJBODZFQzVERDMwQjhEOEY0NUMyNzFGQUE1OTYyQzFCAA==', 'timestamp': '1738108711',
+                                                 'type': 'audio', 'audio': {'mime_type': 'audio/ogg; codecs=opus', 'sha256': '9eToXT58+oi7Jz8U3DWIJ90wXc8oYVHTRd3ITqiSq8o=', 'id': '1962350167582284', 'voice': True}}]}, 'field': 'messages'}]}]}
