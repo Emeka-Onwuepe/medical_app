@@ -1,12 +1,12 @@
 import requests
 
-token = 'EAAXrgbJ16VkBO98cHwL1PU5BhHZAh95yHRbkb0ZBD69OEK7bWku3DS5iCllzbUK4yMax8zRrEd8AFy6BvnkZCi6DkdKFgOdDgnezAImS81TB5buEL2c74UTst532z1ZCBLFsm34ssjIv5LZCIcrj3j90GhaZArOzCLmCZA7R4ZC4HhkiHWeTF9xJfqlVvZCILtLiQqg100J2GG9vZAnJvSdekJkZCwUAJIZD'
+token = 'EAAXrgbJ16VkBO9p8skbDcL4XAIBZCtNwLVpxImq0WThjSvenAZAiU6oZCpMlpB4Imr9LGA4ZCR6ybW8N7ZBXw2SF8XXB8K3q8sjZAiGty5m8kkCQ2N7jJUmZCxVcVsFlWisqzutPtSgkkxskTyH7oqftgeAMcPgQ9s8jxFozz4VCM1E7OmXCTsgFrdnI1wQgJORv1Vn7kbrRqGs4tCu6knQXQAMiZAoZD'
 phone_id = '534666619730859' 
 
 
 def send_whatsapp_message_func(message):
     print('ran')
-    url = f"https://graph.facebook.com/v21.0/{phone_id}/messages"
+    url = f"https://graph.facebook.com/v22.0/{phone_id}/messages"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
@@ -27,16 +27,18 @@ def get_message(data):
     forwarded = False
     messages = data['entry'][0]['changes'][0]['value']['messages'][0]
     message_type = messages['type']
+    record_format = 'text'
     if message_type == 'text':
         content = messages['text']['body']
     else:
-        content = f"{messages[message_type]['id']}\{messages[message_type]['mime_type']}" 
+        content = {messages[message_type]['id']}
+        record_format = messages[message_type]['mime_type'].split('/')[1]
     id = messages['id']
     timestamp = messages['timestamp']
     context = messages.get('context')
     if context:
         forwarded = context['forwarded']
-    return message_type,forwarded,content,id,timestamp
+    return message_type,forwarded,content,id,timestamp,record_format
 
 # {
 #   "field": "messages",
@@ -112,20 +114,20 @@ def get_message(data):
 # #     print(d)
 # #     print('-------------------------------')
 
-{'object': 'whatsapp_business_account', 'entry': [{'id': '519993747869426',
-                                                'changes': [{'value': {'messaging_product': 'whatsapp', 
-                                                                       'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
-                                                                       'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}],
-                                                                       'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEFDOEIyQTU4MTVGQjVEMTU5MTg4RjU5RkFGN0UyOTk0AA==',
-                                                                                    'timestamp': '1738105784', 'type': 'image', 
-                                                                                    'image': {'mime_type': 'image/jpeg', 'sha256': 'fofx8QXQ1FXG412pH959yCMbR2qYpXbuw0OMm1t0aWw=', 
-                                                                                    'id': '503401162364441'}}]}, 'field': 'messages'}]}]}
+# {'object': 'whatsapp_business_account', 'entry': [{'id': '519993747869426',
+#                                                 'changes': [{'value': {'messaging_product': 'whatsapp', 
+#                                                                        'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
+#                                                                        'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}],
+#                                                                        'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEFDOEIyQTU4MTVGQjVEMTU5MTg4RjU5RkFGN0UyOTk0AA==',
+#                                                                                     'timestamp': '1738105784', 'type': 'image', 
+#                                                                                     'image': {'mime_type': 'image/jpeg', 'sha256': 'fofx8QXQ1FXG412pH959yCMbR2qYpXbuw0OMm1t0aWw=', 
+#                                                                                     'id': '503401162364441'}}]}, 'field': 'messages'}]}]}
 
 
-{'object': 'whatsapp_business_account', 
- 'entry': [{'id': '519993747869426', 
-            'changes': [{'value': {'messaging_product': 'whatsapp', 
-                                   'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
-                                   'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}], 
-                                   'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEJBODZFQzVERDMwQjhEOEY0NUMyNzFGQUE1OTYyQzFCAA==', 'timestamp': '1738108711',
-                                                 'type': 'audio', 'audio': {'mime_type': 'audio/ogg; codecs=opus', 'sha256': '9eToXT58+oi7Jz8U3DWIJ90wXc8oYVHTRd3ITqiSq8o=', 'id': '1962350167582284', 'voice': True}}]}, 'field': 'messages'}]}]}
+# {'object': 'whatsapp_business_account', 
+#  'entry': [{'id': '519993747869426', 
+#             'changes': [{'value': {'messaging_product': 'whatsapp', 
+#                                    'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'},
+#                                    'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}], 
+#                                    'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEJBODZFQzVERDMwQjhEOEY0NUMyNzFGQUE1OTYyQzFCAA==', 'timestamp': '1738108711',
+#                                                  'type': 'audio', 'audio': {'mime_type': 'audio/ogg; codecs=opus', 'sha256': '9eToXT58+oi7Jz8U3DWIJ90wXc8oYVHTRd3ITqiSq8o=', 'id': '1962350167582284', 'voice': True}}]}, 'field': 'messages'}]}]}

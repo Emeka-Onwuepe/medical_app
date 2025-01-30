@@ -1,6 +1,8 @@
 from django.db import models
+from django.urls import reverse
 from users.models import Patient, User
 from django.core.validators import FileExtensionValidator
+from django.conf import settings
 
 # Create your models here.
 
@@ -26,12 +28,13 @@ class Whatsapp_Record(models.Model):
     context = models.CharField(max_length=20, choices = context_options)
     record_id = models.CharField(max_length=140, unique=True)
     record_type = models.CharField(max_length=8, choices = record_types)
-    video = models.FileField(verbose_name="video",upload_to = 'videos/',validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
-    audio = models.FileField(verbose_name="audio",upload_to = 'audios/',validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
-    image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
-                            #   height_field=None, width_field=None, max_length=None
-                            )
-    text = models.TextField(verbose_name='text',null=True,blank=True)
+    record_format = models.CharField(max_length=8,default='text')
+    # video = models.FileField(verbose_name="video",upload_to = 'videos/',validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
+    # audio = models.FileField(verbose_name="audio",upload_to = 'audios/',validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
+    # image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
+    #                         #   height_field=None, width_field=None, max_length=None
+    #                         )
+    content = models.TextField(verbose_name='content',null=True,blank=True)
     timestamp = models.DateTimeField(verbose_name="timestamp", auto_now=False, auto_now_add=False)
     date_recorded = models.DateTimeField(verbose_name="recorded", auto_now=False, auto_now_add=True)
     
@@ -46,4 +49,15 @@ class Whatsapp_Record(models.Model):
     def __str__(self):
         """Unicode representation of Whatsapp_Record."""
         return f"{self.timestamp}--{self.medical_practitioner} -- {self.patient}"
+    
+    def get_absolute_url(self):
+        """Return absolute url for Whatsapp_Record."""
+        if self.record_type != 'text':
+            print('not text')
+            allowed_hosts = settings.ALLOWED_HOSTS[0]
+            url = f"https://{allowed_hosts}/platforms/get_image/{self.content}"
+            return url
+            # return reverse("platform:get_image", kwargs={"image_id": self.content})
+        return None
+    
 

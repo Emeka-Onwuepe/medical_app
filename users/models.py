@@ -17,7 +17,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have a phone number')
         if email:
             email =self.normalize_email(email)
-        user = self.model(phone_number,
+        user = self.model(phone_number=phone_number,
                           first_name=first_name,last_name=last_name,
                           user_type=user_type,email=email
                            )

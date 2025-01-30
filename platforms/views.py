@@ -3,8 +3,9 @@ import requests
 from django.shortcuts import render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from platforms.helpers import get_message, send_whatsapp_message_func,token,phone_id
-
+from platforms.helpers import get_message, send_whatsapp_message_func
+from platforms.models import Whatsapp_Record
+from variables import token, phone_id
 
 
 
@@ -28,7 +29,7 @@ def Whatsapp_Hooks(request, *args, **kwargs):
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
                 print('hello')
-                message_type,forwarded,content,id,timestamp = get_message(data)
+                message_type,forwarded,content,id,timestamp,record_format = get_message(data)
                 print(message_type)
                 if forwarded:
                     # customer messages
@@ -63,3 +64,26 @@ def send_whatsapp_message(request,message):
     # }
     # response = requests.post(url, headers=headers, json=payload)
     return HttpResponse("hello my guy", status=200)
+
+
+def get_media_file(request,image_id):
+    image_endpoint = url = f"https://graph.facebook.com/v22.0/{image_id}"
+    headers = {
+        'Authorization': f'Bearer {token}'
+        }
+    get_image_url = requests.request("GET", image_endpoint, headers=headers, data={})
+    if get_image_url.status_code != 200:
+        return HttpResponse("Failed to retrieve media url", status=get_image_url.status_code)
+    url = get_image_url.json()['url']
+    print(url)
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return HttpResponse(response.content, content_type=response.headers['Content-Type'])
+    else:
+        return HttpResponse("Failed to retrieve media file", status=response.status_code)
+    
+def get_abs(request):
+    
+    # print(allowed_hosts)
+    record = Whatsapp_Record.objects.first()
+    return HttpResponse(record.get_absolute_url(), status=200)
