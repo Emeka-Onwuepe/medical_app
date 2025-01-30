@@ -23,20 +23,11 @@ def Whatsapp_Hooks(request, *args, **kwargs):
         
 
     if request.method == 'POST':
-        # print(request.headers['Content-Type'])
         data = json.loads(request.body.decode('utf-8'))
-        print(data)
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
-                print('hello')
-                message_type,forwarded,content,id,timestamp,record_format = get_message(data)
-                print(message_type)
-                if forwarded:
-                    # customer messages
-                    pass
-                else:
-                    pass
-                    # practitioner message
+                whatsapp_message= get_message(data)
+                record = Whatsapp_Record.objects.create(**whatsapp_message)
                 # send_whatsapp_message_func('message recieved')
         except KeyError:
             pass

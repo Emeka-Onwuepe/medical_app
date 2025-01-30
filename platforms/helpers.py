@@ -24,8 +24,9 @@ def send_whatsapp_message_func(message):
 
 
 def get_message(data):
-    forwarded = False
+    context = 'medical_practitioner'
     messages = data['entry'][0]['changes'][0]['value']['messages'][0]
+    sender = messages['from']
     message_type = messages['type']
     record_format = 'text'
     if message_type == 'text':
@@ -35,10 +36,12 @@ def get_message(data):
         record_format = messages[message_type]['mime_type'].split('/')[1]
     id = messages['id']
     timestamp = messages['timestamp']
-    context = messages.get('context')
-    if context:
-        forwarded = context['forwarded']
-    return message_type,forwarded,content,id,timestamp,record_format
+    verify_context = messages.get('context')
+    if verify_context:
+        context = 'patient'
+    return {'message_type':message_type, 'context':context,
+            'content':content,'record_id':id,"timestamp": timestamp,
+            'record_format':record_format}
 
 # {
 #   "field": "messages",
