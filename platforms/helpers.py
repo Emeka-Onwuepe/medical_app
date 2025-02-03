@@ -1,11 +1,10 @@
 import requests
+from datetime import datetime
 
-token = 'EAAXrgbJ16VkBO9p8skbDcL4XAIBZCtNwLVpxImq0WThjSvenAZAiU6oZCpMlpB4Imr9LGA4ZCR6ybW8N7ZBXw2SF8XXB8K3q8sjZAiGty5m8kkCQ2N7jJUmZCxVcVsFlWisqzutPtSgkkxskTyH7oqftgeAMcPgQ9s8jxFozz4VCM1E7OmXCTsgFrdnI1wQgJORv1Vn7kbrRqGs4tCu6knQXQAMiZAoZD'
-phone_id = '534666619730859' 
+from variables import phone_id, token
 
 
-def send_whatsapp_message_func(message):
-    print('ran')
+def send_whatsapp_message_func(message,sender):
     url = f"https://graph.facebook.com/v22.0/{phone_id}/messages"
     headers = {
         "Authorization": f"Bearer {token}",
@@ -13,7 +12,7 @@ def send_whatsapp_message_func(message):
     }
     payload = {
         "messaging_product": "whatsapp",
-        "to": '+2348132180216',
+        "to": sender,
         "type": "text",
         "text": {
             "body": message
@@ -22,6 +21,8 @@ def send_whatsapp_message_func(message):
     response = requests.post(url, headers=headers, json=payload)
     return response
 
+def convert_whatsapp_timestamp(timestamp):
+    return datetime.fromtimestamp(int(timestamp))
 
 def get_message(data):
     context = 'medical_practitioner'
@@ -39,9 +40,13 @@ def get_message(data):
     verify_context = messages.get('context')
     if verify_context:
         context = 'patient'
-    return {'message_type':message_type, 'context':context,
-            'content':content,'record_id':id,"timestamp": timestamp,
-            'record_format':record_format}
+    return {'record_type':message_type, 'context':context,
+            'content':content,'record_id':id,
+            "timestamp": convert_whatsapp_timestamp(timestamp),
+            'record_format':record_format, 'sender':sender}
+    
+
+
 
 # {
 #   "field": "messages",
@@ -134,3 +139,6 @@ def get_message(data):
 #                                    'contacts': [{'profile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}], 
 #                                    'messages': [{'from': '2348132180216', 'id': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIEJBODZFQzVERDMwQjhEOEY0NUMyNzFGQUE1OTYyQzFCAA==', 'timestamp': '1738108711',
 #                                                  'type': 'audio', 'audio': {'mime_type': 'audio/ogg; codecs=opus', 'sha256': '9eToXT58+oi7Jz8U3DWIJ90wXc8oYVHTRd3ITqiSq8o=', 'id': '1962350167582284', 'voice': True}}]}, 'field': 'messages'}]}]}
+
+
+# {'object': 'whatsapp_business_account', 'entry': [{'id': '519993747869426', 'changes': [{'value': {'messaging_product': 'whats 'whatsapp', 'metadata': {'display_phone_number': '15551818928', 'phone_number_id': '534666619730859'}, 'contacts': [{'': {'naprofile': {'name': 'EMEKA ONWUEPE'}, 'wa_id': '2348132180216'}], 'messages': [{'context': {'from': '2348132180216', 'idMjM0ODE': 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIERDNDRERkQyREJGRkNDN0U0Qzc0MzQ1NzRFMzQ5MEMxAA=='}, 'from': '2348132180216', 'id'MjE4MDI: 'wamid.HBgNMjM0ODEzMjE4MDIxNhUCABIYIDM4OTZBNjFCRDE5NTcxMkI1QkYyMzc3OTM3REIzQzkyAA==', 'timestamp': '1738365659', 'tex'text'}t': {'body': 'Ok'}, 'type': 'text'}]}, 'field': 'messages'}]}]}

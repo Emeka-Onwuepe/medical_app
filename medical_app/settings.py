@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-(j46!_h^x1(cn4dal^bqb%)re-+j5sq6%!b%see&gruvx*tk^h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['de29-102-89-68-162.ngrok-free.app','127.0.0.1']
+ALLOWED_HOSTS = ['3ad3-102-89-85-71.ngrok-free.app','127.0.0.1']
 
 
 
@@ -86,23 +86,43 @@ WSGI_APPLICATION = 'medical_app.wsgi.application'
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        "knox.auth.TokenAuthentication",
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
     "DATETIME_FORMAT":"%d/%b/%Y %H:%M",
     "DATE_FORMAT":"%d/%b/%Y",
     
 }
 
+# REST_KNOX = {
+#   'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+#   'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+#   'TOKEN_TTL': timedelta(hours=12),
+#   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+#   'TOKEN_LIMIT_PER_USER': None,
+#   'AUTO_REFRESH': False,
+#   'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+# }
+
+
+
+KNOX_TOKEN_MODEL = 'knox.AuthToken'
+
 REST_KNOX = {
-  'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+  'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
   'AUTH_TOKEN_CHARACTER_LENGTH': 64,
   'TOKEN_TTL': timedelta(hours=12),
   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
   'TOKEN_LIMIT_PER_USER': None,
   'AUTO_REFRESH': False,
+  'AUTO_REFRESH_MAX_TTL': None,
+  'MIN_REFRESH_INTERVAL': 60,
+  'AUTH_HEADER_PREFIX': 'Token',
   'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+  'TOKEN_MODEL': 'knox.AuthToken',
 }
+
+
+
+
 
 CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
 

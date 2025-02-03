@@ -44,7 +44,7 @@ class Whatsapp_Record(models.Model):
 
         verbose_name = 'Whatsapp_Record'
         verbose_name_plural = 'Whatsapp_Records'
-        ordering = ['timestamp']
+        ordering = ['-timestamp']
 
     def __str__(self):
         """Unicode representation of Whatsapp_Record."""
@@ -53,7 +53,7 @@ class Whatsapp_Record(models.Model):
     def get_absolute_url(self):
         """Return absolute url for Whatsapp_Record."""
         if self.record_type != 'text':
-            print('not text')
+            # print('not text')
             allowed_hosts = settings.ALLOWED_HOSTS[0]
             url = f"https://{allowed_hosts}/platforms/get_image/{self.content}"
             return url
@@ -61,3 +61,29 @@ class Whatsapp_Record(models.Model):
         return None
     
 
+
+class Whatsapp_Temp_Record(models.Model):
+    """Model definition for Whatsapp_Temp_Record."""
+
+    # TODO: Define fields here
+    medical_practitioner = models.ForeignKey(User, verbose_name="medical_practitioner",
+                                             on_delete=models.CASCADE, related_name='whatsapp_temp_medical_practitioner')
+    
+    context = models.CharField(max_length=20, choices = context_options)
+    record_id = models.CharField(max_length=140, unique=True)
+    record_type = models.CharField(max_length=8, choices = record_types)
+    record_format = models.CharField(max_length=8,default='text')
+    content = models.TextField(verbose_name='content',null=True,blank=True)
+    timestamp = models.DateTimeField(verbose_name="timestamp", auto_now=False, auto_now_add=False)
+    
+
+    class Meta:
+        """Meta definition for Whatsapp_Temp-Record."""
+
+        verbose_name = 'Whatsapp_Temp_Record'
+        verbose_name_plural = 'Whatsapp_Temp_Records'
+        ordering = ['timestamp']
+
+    def __str__(self):
+        """Unicode representation of Whatsapp_Temp_Record."""
+        return f"{self.timestamp}--{self.medical_practitioner}"
