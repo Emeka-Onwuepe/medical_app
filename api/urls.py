@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path
 from knox import views as KnoxView
 
-from api.apis.users import LoginUser, PatientApi, RegisterMPUser
+from api.apis.users import LoginUser, OTPApi, PatientApi, RegisterMPUser
 
 # from api.apis.whatsapp import Whatsapp_Hooks
 
@@ -15,7 +15,9 @@ urlpatterns = [
     path('registermp', RegisterMPUser.as_view(), name="register"),
     path('login', LoginUser.as_view(), name="login"),
     path('logout', KnoxView.LogoutView.as_view(), name="knox_logout"),
-    path('patient',PatientApi.as_view(),name='patient_view')          
+    path('patient',PatientApi.as_view(),name='patient_view'),
+    path('logoutall', KnoxView.LogoutAllView.as_view(), name="knox_logoutall"),
+    path('otp', OTPApi.as_view(), name="otp"),       
 ]
 
 urlpatterns += router.urls

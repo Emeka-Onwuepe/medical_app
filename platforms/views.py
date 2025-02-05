@@ -1,9 +1,9 @@
 import json
 from django.db import IntegrityError
 import requests
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from datetime import datetime, timezone
 from platforms.helpers import get_message, send_whatsapp_message_func
 from platforms.models import Whatsapp_Record, Whatsapp_Temp_Record
 from users.models import Medical_practitional_Meta_Data, Patient, User
@@ -29,7 +29,6 @@ def Whatsapp_Hooks(request, *args, **kwargs):
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
                 whatsapp_message = get_message(data)
-                print(whatsapp_message)
                 patient = None
                 
                 sender =  whatsapp_message.pop('sender')
@@ -63,6 +62,8 @@ def Whatsapp_Hooks(request, *args, **kwargs):
                             return HttpResponse("Patient Identified", status=200)
                         except Patient.DoesNotExist:
                             md_meta.current_patient = 'none'
+                            md_meta.status = 'closed'
+                            md_meta.notified = False
                             md_meta.save()
                             send_whatsapp_message_func(f"Patient with identifier {identifier} not found",sender)
                             return HttpResponse("Invalid request", status=400)
@@ -77,9 +78,9 @@ def Whatsapp_Hooks(request, *args, **kwargs):
                         return HttpResponse("EVENT_RECEIVED", status=200)
                             
                 if md_meta.status == 'closed' and md_meta.notified == False and md_meta.current_patient == 'none':
-                    print('condition for message')
                     md_meta.notified = True
                     md_meta.status = 'open'
+                    md_meta.last_opened = timezone.now()
                     md_meta.save()
                     msg = 'Please Identify the patient with this record and send END to close the session'
                     response = send_whatsapp_message_func(msg,sender)

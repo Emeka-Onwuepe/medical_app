@@ -6,8 +6,8 @@ from .models import Medical_practitional_Meta_Data
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.user_type == 'medical_practitioner':
         Medical_practitional_Meta_Data.objects.create(medical_practitioner=instance)
-    else:
+    elif instance.user_type == 'medical_practitioner':
         Medical_practitional_Meta_Data.objects.get_or_create(medical_practitioner=instance) 
         

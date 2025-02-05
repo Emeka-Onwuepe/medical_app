@@ -105,10 +105,12 @@ class Medical_practitional_Meta_Data(models.Model):
 
     # TODO: Define fields here
     medical_practitioner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_practitioner_meta')
-    current_patient  = models.CharField(max_length = 5, default='none')
+    current_patient  = models.CharField(max_length = 50, default='none')
     status = models.CharField(verbose_name='status', max_length=6, default='closed')
     notified = models.BooleanField(default=False)
-    modified = models.DateTimeField(auto_now=True)
+    otp = models.IntegerField(verbose_name="otp",default=0,blank=True)
+    otp_created = models.DateTimeField(verbose_name="otp_created", auto_now=False, auto_now_add=False,null=True)
+    last_opened = models.DateTimeField(verbose_name="last_opened", auto_now=False, auto_now_add=False,null=True)
     
     class Meta:
         """Meta definition for Medical_practitional_Meta_Data."""
@@ -118,4 +120,4 @@ class Medical_practitional_Meta_Data(models.Model):
 
     def __str__(self):
         """Unicode representation of Medical_practitional_Meta_Data."""
-        return f"{self.medical_practitioner} --- {self.modified} --- {self.status}"
+        return f"{self.medical_practitioner} --- {self.last_opened} --- {self.status}"

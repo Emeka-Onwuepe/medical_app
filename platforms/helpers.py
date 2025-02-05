@@ -22,7 +22,7 @@ def send_whatsapp_message_func(message,sender):
     return response
 
 def convert_whatsapp_timestamp(timestamp):
-    return datetime.fromtimestamp(int(timestamp))
+    return datetime.fromtimestamp(int(timestamp)).astimezone()
 
 def get_message(data):
     context = 'medical_practitioner'
