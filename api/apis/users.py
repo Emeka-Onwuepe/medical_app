@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.utils import timezone
 from api.helpers import generate_otp
 from users.models import Medical_practitional_Meta_Data
@@ -36,23 +35,23 @@ class RegisterMPUser(generics.GenericAPIView):
                          })
         
         
-class PatientApi(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = Patient_Serializer
+# class PatientApi(generics.GenericAPIView):
+#     permission_classes = [permissions.IsAuthenticated]
+#     serializer_class = Patient_Serializer
     
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        data = request.data['data']
-        action = request.data['action']
-        # del data['action']
-        data['medical_practitioner'] = user.id
+#     def post(self, request, *args, **kwargs):
+#         user = request.user
+#         data = request.data['data']
+#         action = request.data['action']
+#         # del data['action']
+#         data['medical_practitioner'] = user.id
         
-        if action == "create":
-            serializer = self.get_serializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            patient = serializer.save()
-            patient = self.get_serializer(patient)
-            return Response({'created':True,'id':patient})    
+#         if action == "create":
+#             serializer = self.get_serializer(data=data)
+#             serializer.is_valid(raise_exception=True)
+#             patient = serializer.save()
+#             patient = self.get_serializer(patient)
+#             return Response({'created':True,'id':patient})    
 
 
 class OTPApi(generics.GenericAPIView):
@@ -62,10 +61,13 @@ class OTPApi(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         otp = generate_otp()
         user = request.user
+        if user.verified_number:
+            return Response({"message": "Number already verified"}, status=status.HTTP_400_BAD_REQUEST)
+       
         md_meta,created = Medical_practitional_Meta_Data.objects.get_or_create(medical_practitioner=user)
         md_meta.otp = otp
         md_meta.otp_created = timezone.now()
-        md_meta.save()
+        md_meta.save() 
         
         
         # Your Account SID from twilio.com/console

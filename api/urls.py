@@ -2,7 +2,8 @@ from rest_framework import routers
 from django.urls import path
 from knox import views as KnoxView
 
-from api.apis.users import LoginUser, OTPApi, PatientApi, RegisterMPUser
+from api.apis.users import LoginUser, OTPApi, RegisterMPUser
+from api.apis.patient import PatientApi
 
 # from api.apis.whatsapp import Whatsapp_Hooks
 
