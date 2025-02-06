@@ -33,26 +33,27 @@ class RegisterMPUser(generics.GenericAPIView):
         return Response({"user":returnedUser.data,
                          "token":token
                          })
-        
-        
-# class PatientApi(generics.GenericAPIView):
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = Patient_Serializer
-    
-#     def post(self, request, *args, **kwargs):
-#         user = request.user
-#         data = request.data['data']
-#         action = request.data['action']
-#         # del data['action']
-#         data['medical_practitioner'] = user.id
-        
-#         if action == "create":
-#             serializer = self.get_serializer(data=data)
-#             serializer.is_valid(raise_exception=True)
-#             patient = serializer.save()
-#             patient = self.get_serializer(patient)
-#             return Response({'created':True,'id':patient})    
 
+class ManageMPUser(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = User_Serializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        data = request.data['data']
+        action = request.data['action']
+        
+        if action == 'update':
+            serializer = self.get_serializer(user, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+            returnedUser = Get_User_Serializer(user)
+            return Response(returnedUser.data)
+        elif action == 'delete':
+            user.delete()
+            return Response({"message": "User deleted"})
+
+     
 
 class OTPApi(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
