@@ -1,7 +1,8 @@
 from django.utils import timezone
 from api.helpers import generate_otp
 from users.models import Medical_practitional_Meta_Data
-from users.serializers import Get_User_Serializer, Patient_Serializer, User_Serializer, Login_Serializer
+from users.serializers import (Get_User_Serializer,User_Serializer, 
+                               Login_Serializer)
 from django.contrib.auth import get_user_model
 User=get_user_model()
 from rest_framework import permissions,generics,status
