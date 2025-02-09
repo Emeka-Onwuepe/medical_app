@@ -1,8 +1,43 @@
 from rest_framework import permissions,generics,status
 from rest_framework.response import Response
-from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
+from platforms.models import Whatsapp_Record
+from platforms.serializers import Whatsapp_Record_Serializer
 
+class Whatsapp_Record_Api(generics.GenericAPIView):
+
+        permission_classes = [permissions.IsAuthenticated]
+        permission_classes = []
+        serializer_class = Whatsapp_Record_Serializer
+        
+        def get(self,request,*args,**kwargs):
+                records = Whatsapp_Record.objects.first()
+                # records = Whatsapp_Record.objects.filter(record_type ='text')
+                print(records)
+                # return Response('hello word')
+                records = self.get_serializer(records,many=True)
+                return Response(records.data)
+        
+        def post(self, request, *args, **kwargs):
+                user = request.user
+                data = request.data['data']
+                action = request.data['action']
+                data['medical_practitioner'] = user.id
+                
+                if action == 'get_patient_records':
+                    records = Whatsapp_Record.objects.filter(patient=int(data['patient_id']))
+                    records = self.get_serializer(records,many=True)
+                    return Response(records.data)
+                
+                if action == 'delete':
+                    record = Whatsapp_Record.objects.get(id=int(data['id']))
+                    record.delete()
+                    return Response({'deleted':True})
+                
+                return Response({'error':True,'message':'Invalid action'})      
+            
+                
+                
+                
 # class Whatsapp_Hooks(generics.GenericAPIView):
 #     permission_classes = []
 

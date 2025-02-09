@@ -5,6 +5,7 @@ from knox import views as KnoxView
 from api.apis.events import EventApi
 from api.apis.users import LoginUser, ManageMPUser, OTPApi, RegisterMPUser
 from api.apis.patient import PatientApi
+from api.apis.whatsapp import Whatsapp_Record_Api
 
 # from api.apis.whatsapp import Whatsapp_Hooks
 
@@ -25,6 +26,8 @@ urlpatterns = [
     path('patient',PatientApi.as_view(),name='patient_view'),
     # Events api
     path('event',EventApi.as_view(),name='event_view'),
+    # whatsapp_record api
+    path('whatsapp_records',Whatsapp_Record_Api.as_view(),name='whatsapp_records_view'),
 ]
 
 urlpatterns += router.urls
