@@ -25,11 +25,16 @@ def Whatsapp_Hooks(request, *args, **kwargs):
         
 
     if request.method == 'POST':
+        session_minutes = 10
         data = json.loads(request.body.decode('utf-8'))
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
                 whatsapp_message = get_message(data)
                 patient = None
+                
+                if (timezone.now() - whatsapp_message['timestamp']) > timezone.timedelta(minutes=session_minutes):
+                    # remember to decide what to do with the message
+                    return HttpResponse("EVENT_RECEIVED", status=200)
                 
                 sender =  whatsapp_message.pop('sender')
                 medical_practitioner = f"0{sender[3:]}"
@@ -38,6 +43,13 @@ def Whatsapp_Hooks(request, *args, **kwargs):
                 whatsapp_message['medical_practitioner'] = medical_practitioner
                 previous_messages = Whatsapp_Temp_Record.objects.filter(medical_practitioner=medical_practitioner)
                 
+                if (timezone.now() - md_meta.last_opened) > timezone.timedelta(minutes=session_minutes):
+                    md_meta.status = 'closed'
+                    md_meta.current_patient = 'none'
+                    md_meta.notified = False
+                    md_meta.save()
+                    send_whatsapp_message_func("Session has been closed",sender)
+                    return HttpResponse("EVENT_RECEIVED", status=200)
                 
                 if whatsapp_message['record_type'] == 'text' and whatsapp_message['context'] == 'medical_practitioner':
                     if whatsapp_message['content'][:4].lower() == 'copy':
