@@ -8,39 +8,58 @@ user_types = (
                 ("medical_practitioner","medical_practitioner"),
                 ("other","other"),
                 )
-
+gender = (
+                ("male","male"),
+                ("female","female"),
+                )
 class UserManager(BaseUserManager):
-    def create_user(self,phone_number, 
-                    first_name='null',last_name='null',
+    def create_user(self,phone_number, full_name='null',
                     user_type="medical_practitioner",email=None,
-                    specialization='doctor',password=None):
+                    specialization='doctor',image=None,
+                    patient_count=0,work_experience=0,
+                    gender=None,biography=None,date_of_birth=None,
+                    password=None):
         if not phone_number:
             raise ValueError('Users must have a phone number')
         if email:
             email =self.normalize_email(email)
         user = self.model(phone_number=phone_number,
-                          first_name=first_name,last_name=last_name,
+                          full_name=full_name,
                           user_type=user_type,email=email,
-                          specialization=specialization
+                          specialization=specialization,
+                          image=image,patient_count=patient_count,
+                          work_experience=work_experience,
+                          gender=gender,biography=biography,
+                          date_of_birth=date_of_birth
                            )
         user.set_password(password)
         user.save(using=self._db)
-        return user
+        return user 
   
     def create_superuser(self, phone_number, password):
-        user = self.create_user(phone_number,password=password,first_name="SITE",last_name="CREATOR",)
+        user = self.create_user(phone_number,password=password,full_name="SITE CREATOR")
         user.is_admin = True
         user.staff=True
         user.save(using=self._db)
         return user
 
 class User(AbstractBaseUser,PermissionsMixin):
-    first_name =models.CharField(verbose_name='first name', max_length=255)
-    last_name =models.CharField(verbose_name='last name', max_length=255)
+    full_name = models.CharField(verbose_name='full_name', max_length=255,
+                                 default='Name not set',
+                                 null=True)
     phone_number = models.CharField(verbose_name='phone number', max_length=20,unique=True)
     user_type = models.CharField(max_length=20, choices = user_types,default='medical_practitioner')
-    email = models.EmailField(verbose_name='email address',max_length=255,null=True,blank=True,unique=True)
+    email = models.EmailField(verbose_name='email address',max_length=255,null=True,
+                              blank=True,unique=True)
     specialization = models.CharField(verbose_name='specialization', max_length=50)
+    image = models.ImageField("image", upload_to='profile_images/', height_field=None, 
+                              width_field=None, max_length=None,null=True)
+    patient_count = models.IntegerField(verbose_name="patient_count",default=0)
+    work_experience = models.IntegerField(verbose_name="work_experience",default=1)
+    gender = models.CharField(verbose_name='gender',max_length=7, 
+                              choices = gender,null=True)
+    biography  = models.TextField(verbose_name='biography',null=True)
+    date_of_birth = models.DateField(verbose_name="date_of_birth",blank=True,null=True)
     verified_number=models.BooleanField(default=False)
     verified_email=models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -53,7 +72,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
     
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return self.full_name
 
     def has_perm(self, perm, obj=None):
         if not self.is_admin and self.staff:
@@ -85,7 +104,8 @@ class Patient(models.Model):
     # TODO: Define fields here
     full_name = models.CharField(verbose_name='full_name', max_length=150)
     identifier = models.CharField(verbose_name='identifier', max_length=20)
-    whatsapp_number = models.CharField(verbose_name='whatsapp_number', max_length=20)
+    whatsapp_number = models.CharField(verbose_name='whatsapp_number', max_length=20,
+                                       unique=True)
     medical_practitioner = models.ForeignKey(User, verbose_name="medical_practitioner",
                                              on_delete=models.CASCADE, related_name='patient_medical_practitioner')
     

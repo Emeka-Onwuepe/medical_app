@@ -19,6 +19,7 @@ def send_whatsapp_message_func(message,sender):
         }
     }
     response = requests.post(url, headers=headers, json=payload)
+    print(response.text)
     return response
 
 def convert_whatsapp_timestamp(timestamp):

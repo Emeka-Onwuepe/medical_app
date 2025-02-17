@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-(j46!_h^x1(cn4dal^bqb%)re-+j5sq6%!b%see&gruvx*tk^h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3ad3-102-89-85-71.ngrok-free.app','127.0.0.1']
+ALLOWED_HOSTS = ['a04f-102-89-22-18.ngrok-free.app','127.0.0.1']
 
 
 
@@ -124,7 +124,7 @@ REST_KNOX = {
 
 
 
-CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
+CORS_ORIGIN_WHITELIST = ['https://a04f-102-89-22-18.ngrok-free.app','http://localhost:8081']
 
 
 # Database

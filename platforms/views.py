@@ -3,11 +3,11 @@ from django.db import IntegrityError
 import requests
 from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime, timezone
 from platforms.helpers import get_message, send_whatsapp_message_func
 from platforms.models import Whatsapp_Record, Whatsapp_Temp_Record
 from users.models import Medical_practitional_Meta_Data, Patient, User
 from variables import token, phone_id,VERIFY_TOKEN
+from django.utils import timezone
 
 
 
@@ -26,37 +26,40 @@ def Whatsapp_Hooks(request, *args, **kwargs):
 
     if request.method == 'POST':
         session_minutes = 10
+        print('message recieved')
         data = json.loads(request.body.decode('utf-8'))
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
                 whatsapp_message = get_message(data)
                 patient = None
-                
+                print(whatsapp_message)
                 if (timezone.now() - whatsapp_message['timestamp']) > timezone.timedelta(minutes=session_minutes):
                     # remember to decide what to do with the message
                     return HttpResponse("EVENT_RECEIVED", status=200)
                 
                 sender =  whatsapp_message.pop('sender')
-                medical_practitioner = f"0{sender[3:]}"
+                # medical_practitioner = f"0{sender[3:]}"
+                medical_practitioner = f"+{sender}"
                 medical_practitioner = User.objects.get(phone_number=medical_practitioner) 
                 md_meta,created = Medical_practitional_Meta_Data.objects.get_or_create(medical_practitioner=medical_practitioner)
                 whatsapp_message['medical_practitioner'] = medical_practitioner
                 previous_messages = Whatsapp_Temp_Record.objects.filter(medical_practitioner=medical_practitioner)
-                
+                print(md_meta) 
                 if (timezone.now() - md_meta.last_opened) > timezone.timedelta(minutes=session_minutes):
                     md_meta.status = 'closed'
                     md_meta.current_patient = 'none'
                     md_meta.notified = False
+                    md_meta.last_opened = timezone.now()
                     md_meta.save()
-                    send_whatsapp_message_func("Session has been closed",sender)
+                    send_whatsapp_message_func("Session has been closed, please resend",sender)
                     return HttpResponse("EVENT_RECEIVED", status=200)
                 
                 if whatsapp_message['record_type'] == 'text' and whatsapp_message['context'] == 'medical_practitioner':
-                    if whatsapp_message['content'][:4].lower() == 'copy':
+                    if whatsapp_message['content'].strip()[:4].lower() == 'copy':
                         _,identifier = whatsapp_message['content'].split(' ')
                         identifier = identifier.strip()
                         try:
-                            patient  = Patient.objects.get(identifier=identifier)
+                            patient  = Patient.objects.get(whatsapp_number=identifier)
                             md_meta.current_patient = patient.pk
                             md_meta.save()
                             send_whatsapp_message_func(f"{patient.full_name} has been identified",sender)
@@ -88,13 +91,13 @@ def Whatsapp_Hooks(request, *args, **kwargs):
                         md_meta.save()
                         send_whatsapp_message_func("Session has been closed",sender)
                         return HttpResponse("EVENT_RECEIVED", status=200)
-                            
+                     
                 if md_meta.status == 'closed' and md_meta.notified == False and md_meta.current_patient == 'none':
                     md_meta.notified = True
                     md_meta.status = 'open'
                     md_meta.last_opened = timezone.now()
                     md_meta.save()
-                    msg = 'Please Identify the patient with this record and send END to close the session'
+                    msg = "Please Identify the patient with this record by writing COPY followed by the patient's phone number. \n Eg copy 080377****  \n Remember to send END to close the session"
                     response = send_whatsapp_message_func(msg,sender)
                     if response.status_code != 200:
                         md_meta.notified = False
@@ -129,6 +132,7 @@ def Whatsapp_Hooks(request, *args, **kwargs):
 
 
 def send_whatsapp_message(request,message):
+    send_whatsapp_message_func(message,'+2348132180216')
     # print(request.__dict__)
     
     # response = send_whatsapp_message_func(message)

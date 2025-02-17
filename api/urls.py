@@ -3,7 +3,7 @@ from django.urls import path
 from knox import views as KnoxView
 
 from api.apis.events import EventApi
-from api.apis.users import LoginUser, ManageMPUser, OTPApi, RegisterMPUser
+from api.apis.users import LoginUser, ManageMPUser, OTPApi, RegisterMPUser,EditUser
 from api.apis.patient import PatientApi
 from api.apis.whatsapp import Whatsapp_Record_Api
 
@@ -18,6 +18,8 @@ urlpatterns = [
     # users apis
     path('registermp', RegisterMPUser.as_view(), name="register"),
     path('managemp',ManageMPUser.as_view(),name='managemp_view'),
+    path('edituser',EditUser.as_view(),name='editUser'),
+    # path('edituser',EditUser,name='editUser'),
     path('login', LoginUser.as_view(), name="login"),
     path('logout', KnoxView.LogoutView.as_view(), name="knox_logout"),
     path('logoutall', KnoxView.LogoutAllView.as_view(), name="knox_logoutall"),
@@ -28,6 +30,7 @@ urlpatterns = [
     path('event',EventApi.as_view(),name='event_view'),
     # whatsapp_record api
     path('whatsapp_records',Whatsapp_Record_Api.as_view(),name='whatsapp_records_view'),
+    
 ]
 
 urlpatterns += router.urls

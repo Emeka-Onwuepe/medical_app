@@ -44,7 +44,7 @@ class Whatsapp_Record(models.Model):
 
         verbose_name = 'Whatsapp_Record'
         verbose_name_plural = 'Whatsapp_Records'
-        ordering = ['-timestamp']
+        ordering = ['timestamp']
 
     def __str__(self):
         """Unicode representation of Whatsapp_Record."""

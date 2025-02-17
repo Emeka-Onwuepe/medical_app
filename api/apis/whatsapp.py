@@ -6,7 +6,6 @@ from platforms.serializers import Whatsapp_Record_Serializer
 class Whatsapp_Record_Api(generics.GenericAPIView):
 
         permission_classes = [permissions.IsAuthenticated]
-        permission_classes = []
         serializer_class = Whatsapp_Record_Serializer
         
         def get(self,request,*args,**kwargs):
