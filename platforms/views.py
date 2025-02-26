@@ -154,8 +154,8 @@ def send_whatsapp_message(request,message):
     return HttpResponse("hello my guy", status=200)
 
 
-def get_media_file(request,image_id):
-    image_endpoint = url = f"https://graph.facebook.com/v22.0/{image_id}"
+def get_media_file(request,media_id):
+    image_endpoint = url = f"https://graph.facebook.com/v22.0/{media_id}"
     headers = {
         'Authorization': f'Bearer {token}'
         }
@@ -166,6 +166,7 @@ def get_media_file(request,image_id):
     print(url)
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
+        # print(response.content)
         return HttpResponse(response.content, content_type=response.headers['Content-Type'])
     else:
         return HttpResponse("Failed to retrieve media file", status=response.status_code)

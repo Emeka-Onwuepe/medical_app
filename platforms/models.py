@@ -28,7 +28,7 @@ class Whatsapp_Record(models.Model):
     context = models.CharField(max_length=20, choices = context_options)
     record_id = models.CharField(max_length=140, unique=True)
     record_type = models.CharField(max_length=8, choices = record_types)
-    record_format = models.CharField(max_length=8,default='text')
+    record_format = models.CharField(max_length=24,default='text')
     # video = models.FileField(verbose_name="video",upload_to = 'videos/',validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
     # audio = models.FileField(verbose_name="audio",upload_to = 'audios/',validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
     # image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
@@ -55,7 +55,8 @@ class Whatsapp_Record(models.Model):
         if self.record_type != 'text':
             # print('not text')
             allowed_hosts = settings.ALLOWED_HOSTS[0]
-            url = f"https://{allowed_hosts}/platforms/get_image/{self.content}"
+            
+            url = f"http://{allowed_hosts}/platforms/get_image/{self.content}"
             return url
             # return reverse("platform:get_image", kwargs={"image_id": self.content})
         return None

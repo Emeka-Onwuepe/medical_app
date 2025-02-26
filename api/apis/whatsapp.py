@@ -11,7 +11,7 @@ class Whatsapp_Record_Api(generics.GenericAPIView):
         def get(self,request,*args,**kwargs):
                 records = Whatsapp_Record.objects.first()
                 # records = Whatsapp_Record.objects.filter(record_type ='text')
-                print(records)
+                # print(records)
                 # return Response('hello word')
                 records = self.get_serializer(records,many=True)
                 return Response(records.data)

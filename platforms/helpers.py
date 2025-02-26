@@ -34,7 +34,7 @@ def get_message(data):
     if message_type == 'text':
         content = messages['text']['body']
     else:
-        content = {messages[message_type]['id']}
+        content = messages[message_type]['id']
         record_format = messages[message_type]['mime_type'].split('/')[1]
     id = messages['id']
     timestamp = messages['timestamp']
