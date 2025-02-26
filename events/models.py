@@ -9,19 +9,27 @@ status = (
                 ("missed","missed"),
                 ("cancelled","cancelled"),
                 )
+mode = (('online','online'),
+        ('offline','offline'))
+
 
 class Event(models.Model):
     """Model definition for Event."""
 
     # TODO: Define fields here
-    title = models.CharField(verbose_name="title", max_length=150)
-    description = models.CharField(verbose_name="description", max_length=255)
-    time = models.DateTimeField(verbose_name="time", auto_now=False, auto_now_add=False)
+    condition = models.CharField(verbose_name="condition", max_length=250,null=True,blank=True)
+    symptoms = models.CharField(verbose_name="symptoms", max_length=250,null=True,blank=True)
+    notes = models.CharField(verbose_name="notes", max_length=255,null=True,blank=True)
+    date  = models.DateField(verbose_name="date",auto_now=False, auto_now_add=False)
+    time = models.TimeField(verbose_name='time', auto_now=False, auto_now_add=False)
     patient = models.ForeignKey(Patient, verbose_name="patient", 
                                 on_delete=models.CASCADE,related_name='event_patient')
     medical_practitioner = models.ForeignKey(User, verbose_name="patient", 
                                 on_delete=models.CASCADE,related_name='event_medical_practitioner')
-    status = models.CharField(max_length=10, choices = status)
+    status = models.CharField(max_length=10, choices = status,default='pending')
+    mode = models.CharField(max_length=10, choices = mode,default='offline')
+    document = models.FileField(verbose_name='document', upload_to='patient_documents/',
+                                null=True,blank=True)
     
 
     class Meta:

@@ -11,9 +11,11 @@ class EventApi(generics.GenericAPIView):
     
     def post(self, request, *args, **kwargs):
         user = request.user
-        data = request.data['data']
-        action = request.data['action']
-        data['medical_practitioner'] = user.id
+        data = request.data.get('data')
+        action = request.data.get('action')
+        print(action)
+       
+        # data['medical_practitioner'] = user.id
         
         if action =='get_all':
             events = Event.objects.filter(medical_practitioner=user)
@@ -33,18 +35,19 @@ class EventApi(generics.GenericAPIView):
             return Response(events.data)
 
         
-        if action == "create":
-            serializer = self.get_serializer(data=data['data'])
+        if not action:
+            print(request.data['patient'])
+            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             event = serializer.save()
             event = self.get_serializer(event)
-            return Response({'created':True,'id':event})    
+            return Response({'created':True,'event':event.data})    
         elif action == "update":
             event = Event.objects.get(id=data['id'])
-            serializer = self.get_serializer(event,data=data['data'])
+            serializer = self.get_serializer(event,data=data)
             serializer.is_valid(raise_exception=True)
             event = serializer.save()
-            return Response({'updated':True,'id':event.id})
+            return Response({'updated':True,'event':event.data})
         elif action == "delete":
             event = Event.objects.get(id=data['id'])
             event.delete()

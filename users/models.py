@@ -108,6 +108,10 @@ class Patient(models.Model):
                                        unique=True)
     medical_practitioner = models.ForeignKey(User, verbose_name="medical_practitioner",
                                              on_delete=models.CASCADE, related_name='patient_medical_practitioner')
+    image = models.ImageField("image", upload_to='patients_profile_images/', height_field=None, 
+                              width_field=None, max_length=None,null=True)
+    date = models.DateField('date', auto_now=False, auto_now_add=True)
+    
     
 
     class Meta:
