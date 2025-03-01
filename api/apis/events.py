@@ -33,20 +33,27 @@ class EventApi(generics.GenericAPIView):
             events = Event.objects.filter(medical_practitioner=user,time__range=[start_date,end_date])
             events = self.get_serializer(events,many=True)
             return Response(events.data)
-
         
-        if not action:
-            print(request.data['patient'])
+        if action == 'set_status':
+            event = Event.objects.get(id=data['id'])
+            event.status = data['status']
+            event.save()
+            events = self.get_serializer(event)
+            return Response(events.data)
+            
+        if not action and not request.data.get('id'):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             event = serializer.save()
             event = self.get_serializer(event)
             return Response({'created':True,'event':event.data})    
-        elif action == "update":
+        elif  request.data.get('id'):
+            data = request.data
             event = Event.objects.get(id=data['id'])
             serializer = self.get_serializer(event,data=data)
             serializer.is_valid(raise_exception=True)
             event = serializer.save()
+            event = self.get_serializer(event)
             return Response({'updated':True,'event':event.data})
         elif action == "delete":
             event = Event.objects.get(id=data['id'])

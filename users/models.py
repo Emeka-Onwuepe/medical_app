@@ -110,6 +110,7 @@ class Patient(models.Model):
                                              on_delete=models.CASCADE, related_name='patient_medical_practitioner')
     image = models.ImageField("image", upload_to='patients_profile_images/', height_field=None, 
                               width_field=None, max_length=None,null=True)
+    address = models.CharField("address", max_length=250,default='Not Set', null=True,blank=True)
     date = models.DateField('date', auto_now=False, auto_now_add=True)
     
     

@@ -37,8 +37,12 @@ class Event(models.Model):
 
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+        ordering = ['-date']
 
     def __str__(self):
         """Unicode representation of Event."""
         return f"{self.time}--{self.medical_practitioner} -- {self.patient}"
+    
+    def patient_name(self):
+        return self.patient.full_name
 
