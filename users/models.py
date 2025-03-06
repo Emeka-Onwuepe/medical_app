@@ -55,6 +55,10 @@ class User(AbstractBaseUser,PermissionsMixin):
     image = models.ImageField("image", upload_to='profile_images/', height_field=None, 
                               width_field=None, max_length=None,null=True)
     patient_count = models.IntegerField(verbose_name="patient_count",default=0)
+    male_count = models.IntegerField(verbose_name="male_count",default=0)
+    female_count = models.IntegerField(verbose_name='female_count',default=0)
+    api_number = models.CharField(verbose_name='api_number', max_length=20,
+                                  blank=True,null=True)
     work_experience = models.IntegerField(verbose_name="work_experience",default=1)
     gender = models.CharField(verbose_name='gender',max_length=7, 
                               choices = gender,null=True)
@@ -100,10 +104,9 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 class Patient(models.Model):
     """Model definition for Patient."""
-
     # TODO: Define fields here
     full_name = models.CharField(verbose_name='full_name', max_length=150)
-    identifier = models.CharField(verbose_name='identifier', max_length=20)
+    identifier = models.CharField(verbose_name='identifier', max_length=20,blank=True,null=True)
     whatsapp_number = models.CharField(verbose_name='whatsapp_number', max_length=20,
                                        unique=True)
     medical_practitioner = models.ForeignKey(User, verbose_name="medical_practitioner",
@@ -111,7 +114,16 @@ class Patient(models.Model):
     image = models.ImageField("image", upload_to='patients_profile_images/', height_field=None, 
                               width_field=None, max_length=None,null=True)
     address = models.CharField("address", max_length=250,default='Not Set', null=True,blank=True)
-    date = models.DateField('date', auto_now=False, auto_now_add=True)
+    gender =  models.CharField(verbose_name ='gender',max_length=7, 
+                              choices = gender,null=True) 
+    date = models.DateField('date', auto_now=False, auto_now_add=True) 
+    document = models.FileField("document", upload_to='patients_documents/', null=True, blank=True)
+    date_of_birth = models.DateField(verbose_name="date_of_birth", blank=True, null=True)
+    about = models.TextField(verbose_name='about', null=True, blank=True)
+    genotype = models.CharField(verbose_name='genotype', max_length=10, null=True, blank=True)
+    next_of_kin = models.CharField(verbose_name='next_of_kin', max_length=150, null=True, blank=True)
+    condition = models.TextField(verbose_name='condition', null=True, blank=True)
+    symptoms = models.TextField(verbose_name='symptoms', null=True, blank=True)
     
     
 

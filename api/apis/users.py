@@ -76,8 +76,6 @@ class EditUser(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user 
         
-        print(request.data)
-        
         serializer = self.get_serializer(data=request.data, instance=user)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -88,6 +86,21 @@ class EditUser(generics.GenericAPIView):
         returnedUser = Get_User_Serializer(user)
         return Response({"user": returnedUser.data, "token": token})
         return Response({'message':'An error occurred'},status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ChangePassword(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = Edit_User_Serializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        data = request.data
+        if not user.check_password(data['old_password']):
+            return Response({"message": "Incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.set_password(data['new_password'])
+        user.save()
+        return Response({"message": "Password changed successfully"})
 
 class OTPApi(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]

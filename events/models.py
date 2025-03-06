@@ -37,7 +37,7 @@ class Event(models.Model):
 
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
-        ordering = ['-date']
+        ordering = ['date']
 
     def __str__(self):
         """Unicode representation of Event."""

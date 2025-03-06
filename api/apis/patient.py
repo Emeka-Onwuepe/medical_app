@@ -30,11 +30,9 @@ class PatientApi(generics.GenericAPIView):
     
     def post(self, request, *args, **kwargs):
         
-        print(request.data)
         user = request.user
-        data = request.data
-        action = request.data['action']
-        data['data']['medical_practitioner'] = user.id
+        data = request.data.get('data')
+        action = request.data.get('action')
         
         if action =='get_all':
             patients = Patient.objects.filter(medical_practitioner=user)
@@ -46,7 +44,6 @@ class PatientApi(generics.GenericAPIView):
             last_messages = []
             for patient in patients:
                 last_mgs = Whatsapp_Record.objects.filter(patient=patient.id).last()
-                print(last_mgs)
                 last_messages.append(last_mgs)
             
             patients = Patient_Serializer_init(patients,many=True)
@@ -65,19 +62,20 @@ class PatientApi(generics.GenericAPIView):
             patient = self.get_serializer(patient)
             return Response(patient.data)
         
-        if action == "create":
-            serializer = self.get_serializer(data=data['data'])
+        if  not action and not request.data.get('id'):
+            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             patient = serializer.save()
             patient = self.get_serializer(patient)
-            return Response({'created':True,'id':patient})    
-        elif action == "update":
+            return Response({'created':True,'patient':patient.data})    
+        elif request.data.get('id'):
+            data = request.data
             patient = Patient.objects.get(id=data['id'])
-            serializer = self.get_serializer(patient,data=data['data'])
+            serializer = self.get_serializer(patient,data=data)
             serializer.is_valid(raise_exception=True)
             patient = serializer.save()
-            # patient = self.get_serializer(patient)
-            return Response({'updated':True,'id':patient.id})
+            patient = self.get_serializer(patient)
+            return Response({'updated':True,'patient':patient.data})
         elif action == "delete":
             patient = Patient.objects.get(id=data['id'])
             patient.delete()

@@ -13,7 +13,7 @@ class EventApi(generics.GenericAPIView):
         user = request.user
         data = request.data.get('data')
         action = request.data.get('action')
-        print(action)
+    
        
         # data['medical_practitioner'] = user.id
         

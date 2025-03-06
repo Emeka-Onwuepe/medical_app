@@ -88,3 +88,29 @@ class Whatsapp_Temp_Record(models.Model):
     def __str__(self):
         """Unicode representation of Whatsapp_Temp_Record."""
         return f"{self.timestamp}--{self.medical_practitioner}"
+    
+    
+class Api_Number(models.Model):
+    """Model definition for Api_Number."""
+
+    # TODO: Define fields here
+    number = models.CharField(verbose_name='api_number', max_length=20,
+                                  unique=True)
+    count = models.IntegerField(verbose_name='count',default=0)
+    in_use  = models.BooleanField(verbose_name='in_use',default=False)
+    created  = models.DateTimeField(verbose_name='created',auto_now=True)
+    
+    
+
+    class Meta:
+        """Meta definition for Api_Number."""
+
+        verbose_name = 'Api_Number'
+        verbose_name_plural = 'Api_Numbers'
+        ordering = ['created']
+        
+
+    def __str__(self):
+        """Unicode representation of Api_Number."""
+        return f'{self.number} --- {self.count}'
+

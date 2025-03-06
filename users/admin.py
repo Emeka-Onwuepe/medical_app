@@ -61,7 +61,7 @@ class UserAdmin(BaseUserAdmin):
     actions = []
     fieldsets = (
     (None, {'fields': ('full_name','email','phone_number','patient_count','specialization','verified_number',
-                       'password',
+                       'api_number','password',
     'is_active')}),
     ('Permissions', {'fields': ('is_admin',"staff")}),
     )
