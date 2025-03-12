@@ -45,8 +45,22 @@ headers = {
 }
 
 
-response = requests.request("GET", url, headers=headers, data=payload)
-data = response.json()['url']
+# response = requests.request("GET", url, headers=headers, data=payload)
+# data = response.json()['url']
+# print(data)
+# # print(json.dumps(response.text)['url'])
+# print('done')
+
+# api_key = 'a2799c4221aaa16735e5935d944722f3'
+api_key = '86523673f36adc5023ad8a84e87bd931'
+lat = 6.5456
+lon = 3.3479
+url = f'https://pro.openweathermap.org/data/2.5/forecast/climate?lat={lat}&lon={lon}&appid={api_key}'
+
+url = f'https://pro.openweathermap.org/data/2.5/forecast/hourly?lat={lat}&lon={lon}&appid={api_key}'
+url = f'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}'
+response = requests.request("GET", url)
+data = response.json()
 print(data)
 # print(json.dumps(response.text)['url'])
 print('done')

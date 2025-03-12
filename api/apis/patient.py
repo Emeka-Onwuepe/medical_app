@@ -44,7 +44,8 @@ class PatientApi(generics.GenericAPIView):
             last_messages = []
             for patient in patients:
                 last_mgs = Whatsapp_Record.objects.filter(patient=patient.id).last()
-                last_messages.append(last_mgs)
+                if last_mgs: 
+                    last_messages.append(last_mgs)
             
             patients = Patient_Serializer_init(patients,many=True)
             messages = Whatsapp_Record_Serializer_init(last_messages,many=True)

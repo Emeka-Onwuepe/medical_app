@@ -30,7 +30,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['cc86-102-88-71-248.ngrok-free.app','127.0.0.1']
 
-ALLOWED_HOSTS = ['127.0.0.1','cc86-102-88-71-248.ngrok-free.app']
+ALLOWED_HOSTS = ['8813-102-89-41-130.ngrok-free.app','127.0.0.1']
 
 
 
@@ -126,7 +126,7 @@ REST_KNOX = {
 
 
 
-CORS_ORIGIN_WHITELIST = ['https://cc86-102-88-71-248.ngrok-free.app','http://localhost:8081']
+CORS_ORIGIN_WHITELIST = ['https://8813-102-89-41-130.ngrok-free.app','http://localhost:8081','http://localhost:8082']
 
 
 # Database
