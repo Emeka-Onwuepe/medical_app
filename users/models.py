@@ -122,6 +122,8 @@ class Patient(models.Model):
     about = models.TextField(verbose_name='about', null=True, blank=True)
     genotype = models.CharField(verbose_name='genotype', max_length=10, null=True, blank=True)
     next_of_kin = models.CharField(verbose_name='next_of_kin', max_length=150, null=True, blank=True)
+    kin_number = models.CharField(verbose_name='kin_number', max_length=20,
+                                       unique=True,blank=True,null=True)
     condition = models.TextField(verbose_name='condition', null=True, blank=True)
     symptoms = models.TextField(verbose_name='symptoms', null=True, blank=True)
     
