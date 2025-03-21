@@ -112,7 +112,7 @@ def Whatsapp_Hooks(request, *args, **kwargs):
                     for message in previous_messages:
                         try:
                             Whatsapp_Record.objects.create(medical_practitioner=message.medical_practitioner,
-                                                            patient = patient,context = message.content,
+                                                            patient = patient,context = message.context,
                                                             record_id = message.record_id,
                                                             record_type = message.record_type,
                                                             record_format = message.record_format,

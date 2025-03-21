@@ -1,5 +1,7 @@
+import datetime
 from django.contrib.auth import get_user_model
 from events.serializers import Event_Serializer
+from django.db import models
 User=get_user_model()
 from rest_framework import permissions,generics,status
 from rest_framework.response import Response
@@ -18,7 +20,12 @@ class EventApi(generics.GenericAPIView):
         # data['medical_practitioner'] = user.id
         
         if action =='get_all':
-            events = Event.objects.filter(medical_practitioner=user)
+            current_year = datetime.datetime.now().year
+            events = Event.objects.filter(medical_practitioner=user,
+                                          date__year=current_year).exclude(status='cancelled')
+        
+            # event = events.values('date__month', 'mode').annotate(count=models.Count('id'))
+            # print(event)
             events = self.get_serializer(events,many=True)
             return Response(events.data)
         

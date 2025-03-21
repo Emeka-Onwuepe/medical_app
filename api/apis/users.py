@@ -13,6 +13,9 @@ from knox.models import AuthToken
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.conf import settings
 # from twilio.rest import Client
 
 
@@ -95,12 +98,38 @@ class ChangePassword(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         data = request.data
-        if not user.check_password(data['old_password']):
-            return Response({"message": "Incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
+        if  data['action'] == 'old_password':
+            if not user.check_password(data['old_password']):
+                return Response({"message": "Incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message':'correct password'})
+            
+        if data['action'] == 'change_password':
+            if not user.check_password(data['old_password']):
+                return Response({"message": "Incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(data['new_password'])
+            user.save()
+            AuthToken.objects.filter(user=user).delete()
+            return Response({"message": "Password changed successfully"})
         
-        user.set_password(data['new_password'])
-        user.save()
-        return Response({"message": "Password changed successfully"})
+        if data['action'] == 'check_email':
+            if User.objects.filter(email=data['email']).exists():
+                return Response({"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # send email verification
+                # Generate a password reset link
+                reset_link = f"{settings.FRONTEND_URL}/reset-password?email={data['email']}"
+                # Generate a deep link for the mobile app
+                app_link = f"myapp://reset-password?email={data['email']}"
+                # Send email
+                send_mail(
+                    subject="Password Reset Request",
+                    message=f"Click the link below to reset your password:\n{reset_link}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[data['email']],
+                    fail_silently=False,
+                )
+            return Response({"message": "Email is available"})
 
 class OTPApi(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
