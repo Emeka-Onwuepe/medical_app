@@ -26,8 +26,10 @@ def Whatsapp_Hooks(request, *args, **kwargs):
 
     if request.method == 'POST':
         session_minutes = 10
+        
         print('message recieved')
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         try:
             if 'messages' in data['entry'][0]['changes'][0]['value'].keys():
                 whatsapp_message = get_message(data)
@@ -156,14 +158,17 @@ def send_whatsapp_message(request,message):
 
 def get_media_file(request,media_id):
     image_endpoint = url = f"https://graph.facebook.com/v22.0/{media_id}"
+    print('image_endpoint',image_endpoint)
+    print('token',token)
     headers = {
         'Authorization': f'Bearer {token}'
         }
     get_image_url = requests.request("GET", image_endpoint, headers=headers, data={})
     if get_image_url.status_code != 200:
+        print(get_image_url.json()) 
         return HttpResponse("Failed to retrieve media url", status=get_image_url.status_code)
     url = get_image_url.json()['url']
-    print(url)
+
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         # print(response.content)

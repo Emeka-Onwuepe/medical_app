@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from rest_framework.settings import api_settings
+from variables import ngrok
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,8 +31,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['cc86-102-88-71-248.ngrok-free.app','127.0.0.1']
 
-ALLOWED_HOSTS = ['8813-102-89-41-130.ngrok-free.app','127.0.0.1']
-
+ALLOWED_HOSTS = ['cac5-102-89-32-47.ngrok-free.app','127.0.0.1']
 
 
 # Application definition
@@ -122,11 +122,8 @@ REST_KNOX = {
   'TOKEN_MODEL': 'knox.AuthToken',
 }
 
-
-
-
-
-CORS_ORIGIN_WHITELIST = ['https://8813-102-89-41-130.ngrok-free.app','http://localhost:8081','http://localhost:8082']
+# 102-89-32-47
+CORS_ORIGIN_WHITELIST = ['https://cac5-102-89-32-47.ngrok-free.app','http://localhost:8081','http://localhost:8082']
 
 
 # Database
