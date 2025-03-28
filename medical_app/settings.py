@@ -31,7 +31,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['cc86-102-88-71-248.ngrok-free.app','127.0.0.1']
 
-ALLOWED_HOSTS = ['cac5-102-89-32-47.ngrok-free.app','127.0.0.1']
+ALLOWED_HOSTS = [ngrok[8:],'127.0.0.1']
 
 
 # Application definition
@@ -123,7 +123,7 @@ REST_KNOX = {
 }
 
 # 102-89-32-47
-CORS_ORIGIN_WHITELIST = ['https://cac5-102-89-32-47.ngrok-free.app','http://localhost:8081','http://localhost:8082']
+CORS_ORIGIN_WHITELIST = [ngrok,'http://localhost:8081','http://localhost:8082']
 
 
 # Database
