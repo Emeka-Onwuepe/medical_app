@@ -31,7 +31,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['cc86-102-88-71-248.ngrok-free.app','127.0.0.1']
 
-ALLOWED_HOSTS = [ngrok[8:],'127.0.0.1']
+ALLOWED_HOSTS = ['dev.persuasivemhealth.com','127.0.0.1']
 
 
 # Application definition
@@ -123,7 +123,7 @@ REST_KNOX = {
 }
 
 # 102-89-32-47
-CORS_ORIGIN_WHITELIST = [ngrok,'http://localhost:8081','http://localhost:8082']
+CORS_ORIGIN_WHITELIST = ['http://localhost:8081','http://localhost:8082']
 
 
 # Database
@@ -135,6 +135,20 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("db_name"),
+        'USER': os.environ.get("db_user"),
+        'HOST': 'localhost',
+        'PASSWORD': os.environ.get("db_password"),
+        'PORT': '',
+        'OPTIONS': {},
+    }
+}
+
 
 
 # Password validation
