@@ -181,3 +181,60 @@ def get_abs(request):
     # print(allowed_hosts)
     record = Whatsapp_Record.objects.first()
     return HttpResponse(record.get_absolute_url(), status=200)
+
+def facebook_privacy_policy_callback(request):
+    """
+    This is a placeholder view for the Facebook privacy policy callback.
+    It can be used to handle any specific logic related to the callback.
+    """
+
+    # You can add any logic you need here, such as logging or redirecting.
+    return HttpResponse("Facebook Privacy Policy Callback Received", status=200)
+
+
+import base64
+import hashlib
+import hmac
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def facebook_data_deletion_callback(request):
+    if request.method == 'POST':
+        signed_request = request.POST.get('signed_request')
+        data = parse_signed_request(signed_request)
+        if not data:
+            return JsonResponse({'error': 'Invalid signature'}, status=400)
+        user_id = data.get('user_id')
+
+        # Start data deletion
+        status_url = 'https://www.<your_website>.com/deletion?id=abc123'
+        confirmation_code = 'abc123'
+
+        response_data = {
+            'url': status_url,
+            'confirmation_code': confirmation_code
+        }
+        return JsonResponse(response_data)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def parse_signed_request(signed_request):
+    try:
+        encoded_sig, payload = signed_request.split('.', 1)
+        secret = b'appsecret'  # Use your app secret here
+
+        sig = base64_url_decode(encoded_sig)
+        data = json.loads(base64_url_decode(payload))
+
+        expected_sig = hmac.new(secret, payload.encode(), hashlib.sha256).digest()
+        if sig != expected_sig:
+            # Bad signature
+            return None
+        return data
+    except Exception:
+        return None
+
+def base64_url_decode(input_str):
+    input_str += '=' * (-len(input_str) % 4)  # Pad with '='
+    return base64.urlsafe_b64decode(input_str)

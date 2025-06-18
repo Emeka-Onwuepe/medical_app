@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from rest_framework.settings import api_settings
-from variables import ngrok
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +28,6 @@ SECRET_KEY = 'django-insecure-(j46!_h^x1(cn4dal^bqb%)re-+j5sq6%!b%see&gruvx*tk^h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['cc86-102-88-71-248.ngrok-free.app','127.0.0.1']
 
 ALLOWED_HOSTS = ['dev.persuasivemhealth.com','127.0.0.1']
 
