@@ -147,18 +147,18 @@ DATABASES = {
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get("db_name"),
-        'USER':  os.environ.get("db_user"),
-        'HOST': 'localhost',
-        'PASSWORD':  os.environ.get("db_password"),
-        'PORT': '',
-        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                    }
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ.get("db_name"),
+#         'USER':  os.environ.get("db_user"),
+#         'HOST': 'localhost',
+#         'PASSWORD':  os.environ.get("db_password"),
+#         'PORT': '',
+#         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#                     }
+#     }
+# }
 
 
 
@@ -208,3 +208,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings for Namecheap shared hosting email account
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.persuasivemhealth.com'  # e.g. 'mail.yourdomain.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # e.g. 'yourname@yourdomain.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = f'MHealth <{EMAIL_HOST_USER}>'

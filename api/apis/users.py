@@ -180,4 +180,16 @@ class OTPApi(generics.GenericAPIView):
         
         return Response({"message": "OTP authenticated"})
         
+class Test_Email(generics.GenericAPIView):
         
+    def get(self, request, *args, **kwargs):
+        print("Sending test email...")
+        # send email
+        send_mail(
+            subject="Test Email",
+            message="This is a test email from the Django application.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=["pascalemy2010@gmail.com"],
+            fail_silently=False,
+        )
+        return Response({"message": "Test email sent successfully"})

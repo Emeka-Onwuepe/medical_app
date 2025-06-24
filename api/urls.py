@@ -3,7 +3,7 @@ from django.urls import path
 from knox import views as KnoxView
 
 from api.apis.events import EventApi
-from api.apis.users import ChangePassword, LoginUser, ManageMPUser, OTPApi, RegisterMPUser,EditUser
+from api.apis.users import ChangePassword, LoginUser, ManageMPUser, OTPApi, RegisterMPUser,EditUser, Test_Email
 from api.apis.patient import PatientApi
 from api.apis.whatsapp import Whatsapp_Record_Api
 
@@ -31,6 +31,7 @@ urlpatterns = [
     path('event',EventApi.as_view(),name='event_view'),
     # whatsapp_record api
     path('whatsapp_records',Whatsapp_Record_Api.as_view(),name='whatsapp_records_view'),
+    path('textemail',Test_Email.as_view(),name='test_email_view'),
     
 ]
 
