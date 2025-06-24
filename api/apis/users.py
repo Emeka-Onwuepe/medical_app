@@ -148,6 +148,17 @@ class OTPApi(generics.GenericAPIView):
             md_meta.otp = otp
             md_meta.otp_created = timezone.now()
             md_meta.save() 
+
+            # send OTP email
+            send_mail(
+                subject="Your OTP Code",
+                message=f"Your OTP code is {otp}. It is valid for 10 minutes.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            
+            # Uncomment the following lines to send OTP via SMS using Twilio
             # Your Account SID from twilio.com/console
             # account_sid = 'your_account_sid'
             # # Your Auth Token from twilio.com/console
