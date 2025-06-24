@@ -211,7 +211,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings for Namecheap shared hosting email account
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.persuasivemhealth.com'  # e.g. 'mail.yourdomain.com'
+EMAIL_HOST = 'persuasivemhealth.com'  # e.g. 'mail.yourdomain.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # e.g. 'yourname@yourdomain.com'
