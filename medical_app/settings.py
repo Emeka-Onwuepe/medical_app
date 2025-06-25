@@ -147,18 +147,18 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': os.environ.get("db_name"),
-#         'USER':  os.environ.get("db_user"),
-#         'HOST': 'localhost',
-#         'PASSWORD':  os.environ.get("db_password"),
-#         'PORT': '',
-#         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#                     }
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get("db_name"),
+        'USER':  os.environ.get("db_user"),
+        'HOST': 'localhost',
+        'PASSWORD':  os.environ.get("db_password"),
+        'PORT': '',
+        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                    }
+    }
+}
 
 
 
