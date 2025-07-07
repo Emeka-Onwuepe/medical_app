@@ -3,7 +3,7 @@ from django.urls import path
 from knox import views as KnoxView
 
 from api.apis.events import EventApi
-from api.apis.users import ChangePassword, LoginUser, ManageMPUser, OTPApi, RegisterMPUser,EditUser, Test_Email
+from api.apis.users import ChangePassword, LoginUser, ManageMPUser, OTPApi, RegisterMPUser,EditUser, Test_Email, serve_assetlinks
 from api.apis.patient import PatientApi
 from api.apis.whatsapp import Whatsapp_Record_Api
 
@@ -20,6 +20,8 @@ urlpatterns = [
     path('managemp',ManageMPUser.as_view(),name='managemp_view'),
     path('edituser',EditUser.as_view(),name='editUser'),
     path('changepassword',ChangePassword.as_view(),name='change_password'),
+    path('.well-known/assetlinks.json', serve_assetlinks, name='serve_assetlinks'),
+
     # path('edituser',EditUser,name='editUser'),
     path('login', LoginUser.as_view(), name="login"),
     path('logout', KnoxView.LogoutView.as_view(), name="knox_logout"),

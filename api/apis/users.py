@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.utils import timezone
 from api.helpers import generate_otp
 from users.forms import UserModelForm
@@ -204,3 +205,20 @@ class Test_Email(generics.GenericAPIView):
             fail_silently=False,
         )
         return Response({"message": "Test email sent successfully"})
+    
+def serve_assetlinks(request):
+
+    assetlinks = [
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.casper_emeka.persuasivemhealth",
+            "sha256_cert_fingerprints": [
+                "54:88:9D:3D:18:D0:CB:A4:B4:1C:CB:0E:4E:64:91:F7:3C:63:8F:A8:4A:44:DA:2D:DC:D2:F4:39:3A:A5:4B:71"
+            ]
+        }
+    }
+        ]
+    # Return the assetlinks.json file as a JSON response
+    return JsonResponse(assetlinks, safe=False)
