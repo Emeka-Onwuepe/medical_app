@@ -129,7 +129,7 @@ class forgotPassword(generics.GenericAPIView):
                 md_meta.otp = otp
                 md_meta.otp_created = timezone.now()
                 md_meta.save()
-                app_link = f"https://dev.persuasivemhealth.com/resetPassword?otp={otp}"
+                app_link = f"https://dev.persuasivemhealth.com/resetPassword?otp={otp}&user_id={user.id}"
                 # Send email
                 send_mail(
                     subject="Password Reset Request",
@@ -143,6 +143,12 @@ class forgotPassword(generics.GenericAPIView):
             return Response({"message": "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
         
         if data['action'] == 'reset_password':
+            user = None
+            try:
+                user = User.objects.get(id=data['user_id'])
+            except User.DoesNotExist:
+                return Response({"message": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
             otp = data['otp']
             md_meta = Medical_practitional_Meta_Data.objects.get(medical_practitioner=user)
             diff = timezone.now() - md_meta.otp_created
