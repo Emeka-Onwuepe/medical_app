@@ -115,6 +115,7 @@ class ChangePassword(generics.GenericAPIView):
 
 class forgotPassword(generics.GenericAPIView):
     permission_classes = []
+    serializer_class = Edit_User_Serializer
 
     def post(self, request, *args, **kwargs):
         data = request.data
