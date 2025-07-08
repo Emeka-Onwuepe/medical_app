@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from platforms.helpers import get_whatsapp_api_files
 from platforms.models import Api_Number, Whatsapp_Record
-from platforms.models import whatsapp_record
 from django.core.files.base import ContentFile
 User=get_user_model()
 
