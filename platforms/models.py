@@ -32,8 +32,8 @@ class Whatsapp_Record(models.Model):
     video = models.FileField(verbose_name="video",upload_to = 'videos/',null=True,blank=True,
                              validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
     audio = models.FileField(verbose_name="audio",upload_to = 'audios/',null=True,blank=True,
-                             validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
-    image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
+                             validators=[FileExtensionValidator(allowed_extensions=['mp3', 'ogg', 'wav'])])
+    image = models.ImageField(verbose_name='image', upload_to='images/', null=True,blank=True
                             #   height_field=None, width_field=None, max_length=None
                             )
     content = models.TextField(verbose_name='content',null=True,blank=True)

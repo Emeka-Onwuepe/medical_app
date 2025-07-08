@@ -50,6 +50,8 @@ def whatsapp_record_post_save(sender, instance, created, **kwargs):
         instance.save()
 
     elif instance.record_type == 'audio':
+        if record_format == 'ogg; codecs=opus':
+            record_format = 'ogg'
         instance.audio.save(f"{file_id}.{record_format}", ContentFile(content))
         instance.save()
     elif instance.record_type == 'video':
