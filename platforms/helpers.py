@@ -47,10 +47,25 @@ def get_message(data):
             'record_format':record_format, 'sender':sender}
     
 
+def get_whatsapp_api_files(file_id):
+    url = f"https://graph.facebook.com/v22.0/{file_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        url = data['url']
+        response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.content
+    else:
+        print(f"Error fetching API files: {response.status_code}")
 
 
-# {
-#   "field": "messages",
+
+
 #   "value": {
 #     "messaging_product": "whatsapp",
 #     "metadata": {

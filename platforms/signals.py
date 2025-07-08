@@ -1,7 +1,10 @@
-from django.db.models.signals import pre_delete,pre_save,post_delete
+from django.db.models.signals import pre_delete,pre_save,post_delete,post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from platforms.models import Api_Number
+from platforms.helpers import get_whatsapp_api_files
+from platforms.models import Api_Number, Whatsapp_Record
+from platforms.models import whatsapp_record
+from django.core.files.base import ContentFile
 User=get_user_model()
 
 @receiver(pre_save, sender=Api_Number)
@@ -24,6 +27,32 @@ def api_number_post_delete(sender, instance, **kwargs):
         user.api_number = ''
         user.save()
 
-    
-    
-    
+@receiver(post_save, sender=Whatsapp_Record)
+def whatsapp_record_post_save(sender, instance, created, **kwargs):
+    if not created:
+        # If the record is being updated, we don't need to do anything
+        return
+    file_id = None
+    content = None
+    record_format = None
+    if instance.record_type != 'text':
+        file_id = instance.content
+        record_format = instance.record_format
+        content = get_whatsapp_api_files(file_id)
+        if not content:
+            file_id = None
+            content = None
+            record_format = None
+            return
+        
+    # Save the file based on the record type
+    if instance.record_type == 'image':
+        instance.image.save(f"{file_id}.{record_format}", ContentFile(content))
+        instance.save()
+
+    elif instance.record_type == 'audio':
+        instance.audio.save(f"{file_id}.{record_format}", ContentFile(content))
+        instance.save()
+    elif instance.record_type == 'video':
+        instance.video.save(f"{file_id}.{record_format}", ContentFile(content))
+        instance.save()

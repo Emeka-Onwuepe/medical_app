@@ -29,11 +29,13 @@ class Whatsapp_Record(models.Model):
     record_id = models.CharField(max_length=140, unique=True)
     record_type = models.CharField(max_length=8, choices = record_types)
     record_format = models.CharField(max_length=24,default='text')
-    # video = models.FileField(verbose_name="video",upload_to = 'videos/',validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
-    # audio = models.FileField(verbose_name="audio",upload_to = 'audios/',validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
-    # image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
-    #                         #   height_field=None, width_field=None, max_length=None
-    #                         )
+    video = models.FileField(verbose_name="video",upload_to = 'videos/',null=True,blank=True,
+                             validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
+    audio = models.FileField(verbose_name="audio",upload_to = 'audios/',null=True,blank=True,
+                             validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
+    image = models.ImageField(verbose_name='image', upload_to='audios/', null=True,blank=True
+                            #   height_field=None, width_field=None, max_length=None
+                            )
     content = models.TextField(verbose_name='content',null=True,blank=True)
     timestamp = models.DateTimeField(verbose_name="timestamp", auto_now=False, auto_now_add=False)
     date_recorded = models.DateTimeField(verbose_name="recorded", auto_now=False, auto_now_add=True)
