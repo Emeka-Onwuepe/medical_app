@@ -112,33 +112,63 @@ class ChangePassword(generics.GenericAPIView):
             user.save()
             AuthToken.objects.filter(user=user).delete()
             return Response({"message": "Password changed successfully"})
-        
-        if data['action'] == 'check_email':
+
+class forgotPassword(generics.GenericAPIView):
+    permission_classes = []
+    serializer_class = Edit_User_Serializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        data = request.data
+
+        if data['action'] == 'send_app_link':
             if User.objects.filter(email=data['email']).exists():
-                return Response({"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
                 # send email verification
-                # Generate a password reset link
-                reset_link = f"{settings.FRONTEND_URL}/reset-password?email={data['email']}"
                 # Generate a deep link for the mobile app
-                app_link = f"myapp://reset-password?email={data['email']}"
+                otp = generate_otp()
+                md_meta, created = Medical_practitional_Meta_Data.objects.get_or_create(medical_practitioner=user)
+                md_meta.otp = otp
+                md_meta.otp_created = timezone.now()
+                md_meta.save()
+                app_link = f"https://dev.persuasivemhealth.com/resetPassword?otp={otp}"
                 # Send email
                 send_mail(
                     subject="Password Reset Request",
-                    message=f"Click the link below to reset your password:\n{reset_link}",
+                    message=f"Click the link below to reset your password:\n{app_link}",
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[data['email']],
                     fail_silently=False,
                 )
-            return Response({"message": "Email is available"})
+                return Response({"message": "Password reset link sent to your email"})
+
+            return Response({"message": "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if data['action'] == 'reset_password':
+            otp = data['otp']
+            md_meta = Medical_practitional_Meta_Data.objects.get(medical_practitioner=user)
+            diff = timezone.now() - md_meta.otp_created
+            if diff.seconds > 600:
+                return Response({"message": "OTP expired"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                if md_meta.otp != int(otp):
+                    return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    md_meta.otp = 0
+                    md_meta.save()
+                    user.set_password(data['new_password'])
+                    user.save()
+                    AuthToken.objects.filter(user=user).delete()
+                    return Response({"message": "Password reset successfully"})
+        return Response({"message": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class OTPApi(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
         
     def post(self, request, *args, **kwargs):
         user = request.user
-        action= request.data['action']
-        
+        action = request.data['action']
+
         if action == 'get':
             otp = generate_otp()
             user = request.user
@@ -222,3 +252,7 @@ def serve_assetlinks(request):
         ]
     # Return the assetlinks.json file as a JSON response
     return JsonResponse(assetlinks, safe=False)
+
+def resetPasswordAppLink(request):
+   
+    return JsonResponse({"message": 'App not installed, please download the app to reset your password'}, status=200)
