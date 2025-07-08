@@ -115,14 +115,13 @@ class ChangePassword(generics.GenericAPIView):
 
 class forgotPassword(generics.GenericAPIView):
     permission_classes = []
-    serializer_class = Edit_User_Serializer
 
     def post(self, request, *args, **kwargs):
-        user = request.user
         data = request.data
 
         if data['action'] == 'send_app_link':
             if User.objects.filter(email=data['email']).exists():
+                user = User.objects.get(email=data['email'])
                 # send email verification
                 # Generate a deep link for the mobile app
                 otp = generate_otp()
