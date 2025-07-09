@@ -6,7 +6,7 @@ class Whatsapp_Record_Serializer(serializers.ModelSerializer):
         model = Whatsapp_Record
         fields = ('id','patient','context','record_id','record_type',
                   'record_format','content','timestamp',
-                  'date_recorded','get_absolute_url')
+                  'date_recorded','image','audio','video')
         
 class Whatsapp_Record_Serializer_init(serializers.ModelSerializer):
     class Meta:
