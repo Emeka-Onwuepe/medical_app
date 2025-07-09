@@ -57,3 +57,23 @@ def whatsapp_record_post_save(sender, instance, created, **kwargs):
     elif instance.record_type == 'video':
         instance.video.save(f"{file_id}.{record_format}", ContentFile(content))
         instance.save()
+
+@receiver(post_delete, sender=Whatsapp_Record)
+def delete_whatsapp_record_files(sender, instance, **kwargs):
+    if instance.image:
+        instance.image.delete(save=False)
+    if instance.audio:
+        instance.audio.delete(save=False)
+    if instance.video:
+        instance.video.delete(save=False)
+
+@receiver(pre_save, sender=Whatsapp_Record)
+def delete_whatsapp_record_files_copies(sender, instance, *args, **kwargs):
+    if instance.pk:
+        record = Whatsapp_Record.objects.get(pk=instance.pk)
+        if record.image != instance.image:
+            record.image.delete(False)
+        if record.audio != instance.audio:
+            record.audio.delete(False)
+        if record.video != instance.video:
+            record.video.delete(False)

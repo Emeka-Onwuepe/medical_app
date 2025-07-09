@@ -1,4 +1,5 @@
-from django.db.models.signals import post_save,post_delete,pre_delete
+from django.db.models.signals import (post_save,post_delete,
+                                      pre_delete,pre_save)
 from django.contrib.auth import get_user_model
 from platforms.models import Api_Number
 User=get_user_model()
@@ -51,3 +52,31 @@ def create_patient_profile(sender, instance, **kwargs):
     else:
         user.male_count -= 1
     user.save()
+
+
+@receiver(post_delete, sender=User)
+def delete_user_profile(sender, instance, **kwargs):
+    if instance.image:
+        instance.image.delete(save=False)
+
+
+@receiver(pre_save, sender=User)
+def delete_user_image_copies(sender, instance, *args, **kwargs):
+    if instance.pk:
+        user = User.objects.get(pk=instance.pk)
+        if user.image != instance.image:
+            user.image.delete(False)
+
+
+@receiver(post_delete, sender=Patient)
+def delete_patient_image(sender, instance, **kwargs):
+    if instance.image:
+        instance.image.delete(save=False)
+
+
+@receiver(pre_save, sender=Patient)
+def delete_patient_image_copies(sender, instance, *args, **kwargs):
+    if instance.pk:
+        patient = Patient.objects.get(pk=instance.pk)
+        if patient.image != instance.image:
+            patient.image.delete(False)
